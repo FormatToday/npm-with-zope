@@ -13,9 +13,18 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@main
 
+      - name: 设置标签
+        id: set_tags
+        run: |
+          current_time = $(TZ='Asia/Shanghai' date +'%Y%m%d%H%M%S')
+          echo "tag_latest=formattoday/npm:latest" >> $GITHUB_OUTPUT
+          echo "tag_time=formattoday/npm:${current_time}" >> $GITHUB_OUTPUT
+
       - name: 构建docker镜像
         run: |
-          docker build -t formattoday/npm .
+          docker build -t formattoday/npm:local .
+          docker tag formattoday/npm:local ${tag_latest}
+          docker tag formattoday/npm:local ${tag_time}
 
       - name: 推送docker镜像
         env:
@@ -23,4 +32,5 @@ jobs:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
           echo $DOCKER_HUB_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-          docker push formattoday/npm
+          docker push ${tag_latest} ${tag_time}
+
