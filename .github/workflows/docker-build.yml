@@ -22,9 +22,9 @@ jobs:
           tag_latest=${image_name}:latest
           tag_time=${image_name}:${current_time}
 
-          echo "tag_local=${tag_local}" >> $GITHUB_OUTPUT
-          echo "tag_latest=${tag_latest}" >> $GITHUB_OUTPUT
-          echo "tag_time=${tag_time}" >> $GITHUB_OUTPUT
+          echo "tag_local=${tag_local}" >> $GITHUB_ENV
+          echo "tag_latest=${tag_latest}" >> $GITHUB_ENV
+          echo "tag_time=${tag_time}" >> $GITHUB_ENV
 
       - name: 构建docker镜像
         run: |
@@ -38,5 +38,5 @@ jobs:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
           echo $DOCKER_HUB_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-          docker push ${tag_latest} ${tag_time}
-
+          docker push ${tag_latest}
+          docker push ${tag_time}
