@@ -13,18 +13,24 @@ jobs:
       - name: 检出仓库
         uses: actions/checkout@main
 
-      - name: 设置标签
-        id: set_tags
+      - name: 设置变量
+        id: set_vars
         run: |
-          current_time = $(TZ='Asia/Shanghai' date +'%Y%m%d%H%M%S')
-          echo "tag_latest=formattoday/npm:latest" >> $GITHUB_OUTPUT
-          echo "tag_time=formattoday/npm:${current_time}" >> $GITHUB_OUTPUT
+          image_name="formattoday/npm"
+          current_time=$(TZ='Asia/Shanghai' date +'%Y%m%d%H%M%S')
+          tag_local=${image_name}:local
+          tag_latest=${image_name}:latest
+          tag_time=${image_name}:${current_time}
+
+          echo "tag_local=${tag_local}" >> $GITHUB_OUTPUT
+          echo "tag_latest=${tag_latest}" >> $GITHUB_OUTPUT
+          echo "tag_time=${tag_time}" >> $GITHUB_OUTPUT
 
       - name: 构建docker镜像
         run: |
-          docker build -t formattoday/npm:local .
-          docker tag formattoday/npm:local ${tag_latest}
-          docker tag formattoday/npm:local ${tag_time}
+          docker build -t ${tag_local} .
+          docker tag ${tag_local} ${tag_latest}
+          docker tag ${tag_local} ${tag_time}
 
       - name: 推送docker镜像
         env:
