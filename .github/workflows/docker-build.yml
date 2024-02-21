@@ -22,5 +22,5 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
-          docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_TOKEN
+          echo $DOCKER_HUB_TOKEN | docker login -u $DOCKER_HUB_USERNAME --password-stdin
           docker push formattoday/npm
